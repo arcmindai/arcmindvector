@@ -1,0 +1,22 @@
+{
+  "canisters": {
+    "arcmindvectordb": {
+      "candid": "src/arcmindvectordb/arcmindvectordb.did",
+      "package": "arcmindvectordb",
+      "type": "rust",
+      "optimize": "cycles",
+      "gzip": true,
+      "declarations": {
+        "node_compatibility": true
+      }
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}

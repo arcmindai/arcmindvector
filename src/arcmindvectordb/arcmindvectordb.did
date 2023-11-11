@@ -1,0 +1,5 @@
+service : (opt principal, opt principal) -> {
+  get_controller_canister : () -> (opt principal) query;
+  get_owner : () -> (opt principal) query;
+  update_owner : (principal) -> ();
+}
