@@ -5,6 +5,10 @@ use std::cell::RefCell;
 // A memory for upgrades, where data from the heap can be serialized/deserialized.
 const UPGRADES: MemoryId = MemoryId::new(0);
 
+// A memory for the StableVec we're using. A new memory should be created for
+// every additional stable structure.
+const STABLE_VEC_CONTENT: MemoryId = MemoryId::new(1);
+
 pub type Memory = VirtualMemory<DefaultMemoryImpl>;
 
 thread_local! {
@@ -16,4 +20,8 @@ thread_local! {
 
 pub fn get_upgrades_memory() -> Memory {
     MEMORY_MANAGER.with(|m| m.borrow().get(UPGRADES))
+}
+
+pub fn get_stable_vec_content_memory() -> Memory {
+    MEMORY_MANAGER.with(|m| m.borrow().get(STABLE_VEC_CONTENT))
 }
