@@ -21,8 +21,10 @@ use datatype::{PlainDoc, VecDoc, VecQuery};
 mod hash;
 use hash::hash;
 
+mod embeddings;
+use embeddings::{normalize_embeddings, EMBEDDING_SIZE};
+
 const BUCKET_SIZE: usize = 32;
-const EMBEDDING_SIZE: usize = 768;
 pub type Tree = KdTree<f32, u64, EMBEDDING_SIZE, BUCKET_SIZE, u16>;
 use std::collections::HashMap;
 pub type PlainMap = HashMap<u64, PlainDoc>;
@@ -70,9 +72,7 @@ fn init_stable_vec_content() -> StableVec<VecDoc, Memory> {
 #[update]
 #[candid_method(update)]
 pub fn add(doc: VecDoc) {
-    let mut embeddings = doc.embeddings.clone();
-    embeddings.resize(EMBEDDING_SIZE, 0.0);
-
+    let embeddings = normalize_embeddings(doc.embeddings.clone());
     let query: &[f32; EMBEDDING_SIZE] = &embeddings.try_into().unwrap();
     let plain_doc = PlainDoc {
         content: doc.content.to_owned(),
@@ -133,32 +133,38 @@ pub fn delete(doc: VecDoc) {
 }
 
 pub fn init_index() {
-    // let data_vec: Vec<(u64, PlainDoc)> = resource
-    //     .docs
-    //     .iter()
-    //     .map(|resource| PlainDoc {
-    //         id: resource.id.to_owned(),
-    //         title: resource.title.to_owned(),
-    //         url: resource.url.to_owned(),
-    //     })
-    //     .map(|document| (hash(&document), document))
-    //     .collect();
+    let vec_content: Vec<VecDoc> = STATE.with(|s| s.borrow().stable_vec_content.iter().collect());
 
-    // let plain_map: HashMap<u64, PlainDoc> = data_vec.clone().into_iter().collect();
-    // let mut tree: Tree = KdTree::new();
+    let data_vec: Vec<(u64, PlainDoc)> = vec_content
+        .iter()
+        .map(|doc| PlainDoc {
+            content: doc.content.to_owned(),
+        })
+        .map(|document| (hash(&document), document))
+        .collect();
 
-    // resource
-    //     .docs
-    //     .iter()
-    //     .zip(data_vec.iter())
-    //     .for_each(|(resource, data)| {
-    //         let mut embeddings = resource.embeddings.clone();
-    //         embeddings.resize(EMBEDDING_SIZE, 0.0);
+    // assign data_vec to PLAIN_MAP
+    PLAIN_MAP.with(|plain_map| {
+        let mut map = plain_map.borrow_mut();
+        for (id, doc) in data_vec.iter() {
+            map.insert(*id, doc.to_owned());
+        }
+    });
 
-    //         let query: &[f32; EMBEDDING_SIZE] = &embeddings.try_into().unwrap();
-    //         // "item" holds the position of the document in "data"
-    //         tree.add(query, data.0);
-    //     });
+    // iterate through vec_content and add to TREE
+    TREE.with(|tree| {
+        let mut tree = tree.borrow_mut();
+        for doc in vec_content.iter() {
+            let embeddings = normalize_embeddings(doc.embeddings.clone());
+            let query: &[f32; EMBEDDING_SIZE] = &embeddings.try_into().unwrap();
+            let plain_doc = PlainDoc {
+                content: doc.content.to_owned(),
+            };
+
+            let id = hash(&plain_doc);
+            tree.add(query, id);
+        }
+    });
 }
 
 #[query]
@@ -237,6 +243,9 @@ fn post_upgrade() {
     // Deserialize and set the state.
     let state = ciborium::de::from_reader(&*state_bytes).expect("failed to decode state");
     STATE.with(|s| *s.borrow_mut() = state);
+
+    // Rebuild the index from the stable vector content
+    init_index();
 }
 
 // ---------------------- Custom getrandom ----------------------

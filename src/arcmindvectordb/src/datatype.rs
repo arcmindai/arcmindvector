@@ -6,10 +6,12 @@ use std::borrow::Cow;
 use ic_stable_structures::{BoundedStorable, Storable};
 const MAX_VALUE_SIZE: u32 = 1024 * 1024;
 
+pub type Embeddings = Vec<f32>;
+
 #[derive(CandidType, Serialize, Deserialize, Debug, Clone)]
 pub struct VecDoc {
     pub content: String,
-    pub embeddings: Vec<f32>,
+    pub embeddings: Embeddings,
 }
 
 impl Storable for VecDoc {
