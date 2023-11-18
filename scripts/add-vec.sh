@@ -1,6 +1,5 @@
 # To deplopy locally; update IC_NETWORK to local. To deploy to ic; update IC_NETWORK to ic.
-# IC_NETWORK=${IC_NETWORK:-local}
-IC_NETWORK=ic
+IC_NETWORK=${IC_NETWORK:-local}
 
 CONTENT_TEXT="$(cat embeddings/nmn2-content.txt)"
 CONTENT_VECTOR="$(cat embeddings/nmn2-vec.txt)"
