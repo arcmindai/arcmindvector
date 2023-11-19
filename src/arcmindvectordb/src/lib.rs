@@ -96,8 +96,8 @@ pub fn add(doc: VecDoc) {
 
 #[query]
 #[candid_method(query)]
-pub fn search(query: VecQuery, k: usize) -> Option<Vec<PlainDoc>> {
-    let mut query: Vec<f32> = match query {
+pub fn search(vec_query: VecQuery, k: usize) -> Option<Vec<PlainDoc>> {
+    let mut query: Vec<f32> = match vec_query {
         VecQuery::Embeddings(q) => q.to_owned(),
     };
     query.resize(EMBEDDING_SIZE, 0.0);
@@ -224,7 +224,7 @@ fn pre_upgrade() {
     let mut memory = memory::get_upgrades_memory();
     let mut writer = Writer::new(&mut memory, 0);
     writer.write(&len.to_le_bytes()).unwrap();
-    writer.write(&state_bytes).unwrap()
+    writer.write(&state_bytes).unwrap();
 }
 
 #[post_upgrade]
