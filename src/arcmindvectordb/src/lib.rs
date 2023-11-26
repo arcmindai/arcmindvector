@@ -71,7 +71,7 @@ fn init_stable_vec_content() -> StableVec<VecDoc, Memory> {
 // Vector DB main functions
 #[update]
 #[candid_method(update)]
-pub fn add(doc: VecDoc) {
+pub fn add(doc: VecDoc) -> String {
     let embeddings = normalize_embeddings(doc.embeddings.clone());
     let query: &[f32; EMBEDDING_SIZE] = &embeddings.try_into().unwrap();
     let plain_doc = PlainDoc {
@@ -92,6 +92,8 @@ pub fn add(doc: VecDoc) {
             .push(&doc)
             .expect("call to stable_vec_content.push fails")
     });
+
+    return "success".to_string();
 }
 
 #[query]

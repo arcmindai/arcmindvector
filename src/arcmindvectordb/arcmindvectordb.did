@@ -2,7 +2,7 @@ type PlainDoc = record { content : text };
 type VecDoc = record { content : text; embeddings : vec float32 };
 type VecQuery = variant { Embeddings : vec float32 };
 service : (opt principal, opt principal) -> {
-  add : (VecDoc) -> ();
+  add : (VecDoc) -> (text);
   delete : (VecDoc) -> ();
   get_controller_canister : () -> (opt principal) query;
   get_owner : () -> (opt principal) query;
