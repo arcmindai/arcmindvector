@@ -33,4 +33,3 @@ jobs:
         env:
           IC_NETWORK: ic
           CONTROLLER_PRINCIPAL: ${{ secrets.CONTROLLER_PRINCIPAL }}
-          OWENR_PRINCIPAL: ${{ secrets.OWENR_PRINCIPAL }}
