@@ -37,7 +37,6 @@ use memory::Memory;
 #[derive(Serialize, Deserialize)]
 pub struct State {
     pub owner: Option<Principal>,
-    pub controller_canister: Option<Principal>,
 
     #[serde(skip, default = "init_stable_vec_content")]
     stable_vec_content: StableVec<VecDoc, Memory>,
@@ -47,7 +46,6 @@ impl Default for State {
     fn default() -> Self {
         Self {
             owner: None,
-            controller_canister: None,
             stable_vec_content: init_stable_vec_content(),
         }
     }
@@ -69,7 +67,7 @@ fn init_stable_vec_content() -> StableVec<VecDoc, Memory> {
 }
 
 // Vector DB main functions
-#[update]
+#[update(guard = "assert_owner")]
 #[candid_method(update)]
 pub fn add(doc: VecDoc) -> String {
     let embeddings = normalize_embeddings(doc.embeddings.clone());
@@ -96,7 +94,7 @@ pub fn add(doc: VecDoc) -> String {
     return "success".to_string();
 }
 
-#[query]
+#[query(guard = "assert_owner")]
 #[candid_method(query)]
 pub fn search(vec_query: VecQuery, k: usize) -> Option<Vec<PlainDoc>> {
     let mut query: Vec<f32> = match vec_query {
@@ -119,7 +117,7 @@ pub fn search(vec_query: VecQuery, k: usize) -> Option<Vec<PlainDoc>> {
     Some(result)
 }
 
-#[update]
+#[update(guard = "assert_owner")]
 #[candid_method(update)]
 pub fn delete(doc: VecDoc) {
     let mut embeddings = doc.embeddings.clone();
@@ -134,7 +132,7 @@ pub fn delete(doc: VecDoc) {
     PLAIN_MAP.with(|plain_map| plain_map.borrow_mut().remove(&id));
 }
 
-pub fn init_index() {
+fn init_index() {
     let vec_content: Vec<VecDoc> = STATE.with(|s| s.borrow().stable_vec_content.iter().collect());
 
     let data_vec: Vec<(u64, PlainDoc)> = vec_content
@@ -169,22 +167,20 @@ pub fn init_index() {
     });
 }
 
-#[query]
+#[query(guard = "assert_owner")]
 #[candid_method(query)]
 pub fn size() -> usize {
     return PLAIN_MAP.with(|plain_map| plain_map.borrow().len());
 }
 
 // ---------------------- Supporting Functions ----------------------
-// Controller canister must be created with principal
 #[init]
 #[candid_method(init)]
-fn init(owner: Option<Principal>, controller_canister: Option<Principal>) {
+fn init(owner: Option<Principal>) {
     let my_owner: Principal = owner.unwrap_or_else(|| api::caller());
     STATE.with(|state| {
         *state.borrow_mut() = State {
             owner: Some(my_owner),
-            controller_canister: controller_canister,
             stable_vec_content: init_stable_vec_content(),
         };
     });
@@ -194,12 +190,6 @@ fn init(owner: Option<Principal>, controller_canister: Option<Principal>) {
 #[candid_method(query)]
 pub fn get_owner() -> Option<Principal> {
     STATE.with(|state| (*state.borrow()).owner)
-}
-
-#[query]
-#[candid_method(query)]
-pub fn get_controller_canister() -> Option<Principal> {
-    STATE.with(|state| (*state.borrow()).controller_canister)
 }
 
 #[update(guard = "assert_owner")]

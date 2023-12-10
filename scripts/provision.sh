@@ -2,8 +2,9 @@
 IC_NETWORK=${IC_NETWORK:-local}
 echo Provisioning on $IC_NETWORK
 
-OWENR_PRINCIPAL=$(dfx identity --network $IC_NETWORK get-principal)
+# Owner is controller canister
+OWENR_PRINCIPAL=${CONTROLLER_PRINCIPAL}
 
 # Deploy vectordb canister 
-echo Deploying vectordb canister with owner $OWENR_PRINCIPAL, controller $CONTROLLER_PRINCIPAL
-dfx deploy --network $IC_NETWORK arcmindvectordb --argument "(opt principal \"$OWENR_PRINCIPAL\", opt principal \"$CONTROLLER_PRINCIPAL\")"
+echo Deploying vectordb canister with owner $OWENR_PRINCIPAL
+dfx deploy --network $IC_NETWORK arcmindvectordb --argument "(opt principal \"$OWENR_PRINCIPAL\")"
