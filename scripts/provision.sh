@@ -11,3 +11,7 @@ echo Provisioning on $IC_NETWORK
 # Deploy vectordb canister 
 echo Deploying vectordb canister with owner $CONTROLLER_PRINCIPAL
 dfx deploy --network $IC_NETWORK arcmindvectordb --argument "(opt principal \"$CONTROLLER_PRINCIPAL\")"
+
+export VECTOR_PRINCIPAL=$(dfx canister --network $IC_NETWORK id arcmindvectordb)
+
+echo VECTOR_PRINCIPAL=$VECTOR_PRINCIPAL
