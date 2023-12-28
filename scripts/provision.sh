@@ -1,6 +1,6 @@
 # Validate required env vars
-if [[ -z "${OWENR_PRINCIPAL}" ]]; then
-  echo "OWENR_PRINCIPAL is unset."
+if [[ -z "${CONTROLLER_PRINCIPAL}" ]]; then
+  echo "CONTROLLER_PRINCIPAL is unset."
   exit 1
 fi
 
@@ -9,5 +9,5 @@ IC_NETWORK=${IC_NETWORK:-local}
 echo Provisioning on $IC_NETWORK
 
 # Deploy vectordb canister 
-echo Deploying vectordb canister with owner $OWENR_PRINCIPAL
-dfx deploy --network $IC_NETWORK arcmindvectordb --argument "(opt principal \"$OWENR_PRINCIPAL\")"
+echo Deploying vectordb canister with owner $CONTROLLER_PRINCIPAL
+dfx deploy --network $IC_NETWORK arcmindvectordb --argument "(opt principal \"$CONTROLLER_PRINCIPAL\")"
