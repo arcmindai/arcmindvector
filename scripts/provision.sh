@@ -1,4 +1,4 @@
-#!/bin/sh -l
+#!/bin/bash
 
 # Validate required env vars
 if [[ -z "${CONTROLLER_PRINCIPAL}" ]]; then
