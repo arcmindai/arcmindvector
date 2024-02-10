@@ -65,3 +65,4 @@ Code & Architecture: Henry Chan, [henry@arcmindai.app](mailto:henry@arcmindai.ap
 - [Semantic Search: Measuring Meaning From Jaccard to Bert](https://www.pinecone.io/learn/semantic-search/)
 - [A high-performance, flexible, ergonomic k-d tree Rust library](https://github.com/sdd/kiddo)
 - [K-d tree](https://en.wikipedia.org/wiki/K-d_tree)
+- [Depplearing.ai course - Building Applications with Vector Databases](https://www.deeplearning.ai/short-courses/building-applications-vector-databases/)
