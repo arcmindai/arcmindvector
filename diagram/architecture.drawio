@@ -1,0 +1,53 @@
+<mxfile host="65bd71144e">
+    <diagram id="a3mhpKqtOrk29XRP44x8" name="Page-1">
+        <mxGraphModel dx="695" dy="597" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Vector DB" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+                    <mxGeometry x="510" y="128" width="60" height="290" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" style="edgeStyle=none;html=1;entryX=0;entryY=0;entryDx=0;entryDy=80;entryPerimeter=0;exitX=1;exitY=0.25;exitDx=0;exitDy=0;" edge="1" parent="1" source="12" target="2">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="70" y="223.33333333333337" as="sourcePoint"/>
+                        <mxPoint x="430" y="320" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="5" value="2. Add resulting vector and doc text" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="4">
+                    <mxGeometry x="0.0112" y="3" relative="1" as="geometry">
+                        <mxPoint x="-128" y="-18" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="6" value="4. Search for similar docs using search &lt;br&gt;keyword embedding" style="edgeStyle=none;html=1;entryX=-0.05;entryY=0.769;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;" edge="1" parent="1" source="12" target="2">
+                    <mxGeometry x="-0.5081" y="20" relative="1" as="geometry">
+                        <mxPoint x="70" y="260" as="sourcePoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="9" style="edgeStyle=none;html=1;entryX=0.014;entryY=0.08;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0.077;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="12" target="8">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="62.5" y="165" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="10" value="1. Generate embedding from your doc text" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="9">
+                    <mxGeometry x="-0.2027" y="1" relative="1" as="geometry">
+                        <mxPoint x="26" y="-21" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="11" value="3. Generate embedding from your &lt;br&gt;search keywords text" style="edgeStyle=none;html=1;entryX=-0.014;entryY=0.478;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" target="8">
+                    <mxGeometry x="-0.165" y="23" relative="1" as="geometry">
+                        <mxPoint x="60" y="273" as="sourcePoint"/>
+                        <mxPoint x="268" y="276" as="targetPoint"/>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8" value="OpenAI Embedding API" style="rounded=1;whiteSpace=wrap;html=1;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=0" vertex="1" parent="1">
+                    <mxGeometry x="300" y="139" width="40" height="281" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="User" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;labelPosition=center;verticalLabelPosition=top;align=center;verticalAlign=bottom;strokeColor=#6c8ebf;" vertex="1" parent="1">
+                    <mxGeometry x="20" y="139" width="40" height="281" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
