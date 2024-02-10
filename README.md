@@ -59,6 +59,9 @@ Code & Architecture: Henry Chan, [henry@arcmindai.app](mailto:henry@arcmindai.ap
 ## References
 
 - [Internet Computer](https://internetcomputer.org)
-- [Motoko](https://internetcomputer.org/docs/current/motoko/main/motoko)
-- [NextJS IC Starter](https://github.com/dappblock/nextjs-ic-starter/)
-- [Vessel Package Manager](https://github.com/dfinity/vessel)
+- [Open-source vector similarity search for Postgres](https://github.com/pgvector/pgvector)
+- [Spotify Annoy Library - Approximate Nearest Neighbors in C++/Python](https://github.com/spotify/annoy)
+- [What is similarity Search](https://www.pinecone.io/learn/what-is-similarity-search/)
+- [Semantic Search: Measuring Meaning From Jaccard to Bert](https://www.pinecone.io/learn/semantic-search/)
+- [A high-performance, flexible, ergonomic k-d tree Rust library](https://github.com/sdd/kiddo)
+- [K-d tree](https://en.wikipedia.org/wiki/K-d_tree)
