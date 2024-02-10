@@ -93,9 +93,9 @@ cat ~/.config/dfx/identity/default/wallets.json
 
 - [x] Backend - Research and implement primary canister as long-term VectorStore with Nearest Neighbours distance metric, embedding API and indexing
 - [x] Backend - Integrate with ArcMind AI Autonomous Agent for long-term memory
-- [] Doc - Add documentation for the VectorStore API
-- [] Backend - Self-hosted machine learning models for generating text (NLP), image and audio embeddings
-- [] Backend - Scalable storage buckets for large-scale vector data beyond the canister storage limit
+- [ ] Doc - Add documentation for the VectorStore API
+- [ ] Backend - Self-hosted machine learning models for generating text (NLP), image and audio embeddings
+- [ ] Backend - Scalable storage buckets for large-scale vector data beyond the canister storage limit
 
 ## License
 
@@ -113,7 +113,7 @@ Code & Architecture: Henry Chan, [henry@arcmindai.app](mailto:henry@arcmindai.ap
 
 - [Internet Computer](https://internetcomputer.org)
 - [Cloudflare - What is a Vector Database?](https://developers.cloudflare.com/vectorize/reference/what-is-a-vector-database/)
-- [RAG] (https://arxiv.org/abs/2005.11401)
+- [RAG](https://arxiv.org/abs/2005.11401)
 - [Open-source vector similarity search for Postgres](https://github.com/pgvector/pgvector)
 - [Spotify Annoy Library - Approximate Nearest Neighbors in C++/Python](https://github.com/spotify/annoy)
 - [What is similarity Search](https://www.pinecone.io/learn/what-is-similarity-search/)
