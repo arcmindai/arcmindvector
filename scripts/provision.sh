@@ -20,8 +20,7 @@ fi
 IC_NETWORK=${IC_NETWORK:-local}
 
 # Deploy vectordb canister 
-
-echo Deploying arcmindvectordb canister with owner=$CONTROLLER_PRINCIPAL, BATTERY_PRINCIPAL=$BATTERY_PRINCIPAL, BATTERY_API_KEY=$BATTERY_API_KEY on $IC_NETWORK
+# NOTES - DO NOT echo other content as it will becomes the input of parent script in arcmindai provision-instance.sh
 dfx deploy --network $IC_NETWORK arcmindvectordb --argument "(opt principal \"$CONTROLLER_PRINCIPAL\", opt \"$BATTERY_API_KEY\", opt principal \"$BATTERY_PRINCIPAL\")" > arcmindvectordb_deploy.txt
 
 VECTOR_PRINCIPAL=$(dfx canister --network $IC_NETWORK id arcmindvectordb)
