@@ -30,5 +30,5 @@ jobs:
         env:
           IC_NETWORK: local
           CONTROLLER_PRINCIPAL: ${{ secrets.TEST_CONTROLLER_PRINCIPAL }}
-          BATTERY_PRINCIAL: ${{ secrets.TEST_CONTROLLER_PRINCIPAL }}
+          BATTERY_PRINCIPAL: ${{ secrets.TEST_CONTROLLER_PRINCIPAL }}
           BATTERY_API_KEY: testing
