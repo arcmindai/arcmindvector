@@ -17,6 +17,7 @@ ciborium = "0.2"
 ic-stable-structures = "0.5.6"
 getrandom = { version = "0.2.11", features = ["custom"] }
 kiddo = { version = "2.1.1", features = ["serialize"] }
+ic-cdk-timers = "0.1.0"
 
 [build-dependencies]
 candid = "0.8"

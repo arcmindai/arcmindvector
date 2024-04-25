@@ -1,5 +1,5 @@
 use candid::Deserialize;
-use std::cell::RefCell;
+use std::{cell::RefCell, time::Duration};
 
 use serde::Serialize;
 
@@ -29,6 +29,16 @@ pub type Tree = KdTree<f32, u64, EMBEDDING_SIZE, BUCKET_SIZE, u16>;
 use std::collections::HashMap;
 pub type PlainMap = HashMap<u64, PlainDoc>;
 
+// --- Cycles topup ---
+// 3 days
+const CYCLES_BALANCE_CHECK_MIN_INTERVAL_SECS: u64 = 60 * 60 * 24 * 3;
+// Cycle usage threshold
+const CYCLES_ONE_TC: u64 = 1_000_000_000_000;
+const CYCLES_THRESHOLD: u64 = 3 * CYCLES_ONE_TC;
+const CYCLES_TOPUP_AMT: u64 = 4 * CYCLES_ONE_TC;
+
+const CYCLES_TOPUP_GROUP: &str = "arcmindvectordb";
+
 // Stable Structure
 use ic_stable_structures::{writer::Writer, Memory as _, StableVec};
 mod memory;
@@ -37,6 +47,8 @@ use memory::Memory;
 #[derive(Serialize, Deserialize)]
 pub struct State {
     pub owner: Option<Principal>,
+    pub battery_api_key: Option<String>,
+    pub battery_canister: Option<Principal>,
 
     #[serde(skip, default = "init_stable_vec_content")]
     stable_vec_content: StableVec<VecDoc, Memory>,
@@ -46,6 +58,8 @@ impl Default for State {
     fn default() -> Self {
         Self {
             owner: None,
+            battery_api_key: None,
+            battery_canister: None,
             stable_vec_content: init_stable_vec_content(),
         }
     }
@@ -176,14 +190,22 @@ pub fn size() -> usize {
 // ---------------------- Supporting Functions ----------------------
 #[init]
 #[candid_method(init)]
-fn init(owner: Option<Principal>) {
+fn init(
+    owner: Option<Principal>,
+    battery_api_key: Option<String>,
+    battery_canister: Option<Principal>,
+) {
     let my_owner: Principal = owner.unwrap_or_else(|| api::caller());
     STATE.with(|state| {
         *state.borrow_mut() = State {
             owner: Some(my_owner),
+            battery_api_key: battery_api_key,
+            battery_canister: battery_canister,
             stable_vec_content: init_stable_vec_content(),
         };
     });
+
+    start_cycles_check_timer(CYCLES_BALANCE_CHECK_MIN_INTERVAL_SECS);
 }
 
 #[query]
@@ -198,6 +220,79 @@ pub fn update_owner(new_owner: Principal) {
     STATE.with(|state| {
         state.borrow_mut().owner = Some(new_owner);
     });
+}
+
+//  Check if the cycles balance is below the threshold, and topup from Cycles Battery canister if necessary
+#[update]
+#[candid_method(update)]
+async fn check_cycles_and_topup() {
+    // Get the cycles balance
+    let current_canister_balance = ic_cdk::api::canister_balance();
+
+    // log the cycles balance
+    ic_cdk::println!("Current canister balance: {}", current_canister_balance);
+
+    let battery_api_key: Option<String> =
+        STATE.with(|state| (*state.borrow()).battery_api_key.clone());
+    let battery_canister = STATE.with(|state| (*state.borrow()).battery_canister.unwrap());
+
+    // Make Topup request if the balance is below the threshold
+    if current_canister_balance < CYCLES_THRESHOLD {
+        ic_cdk::println!("Cycles balance is below the threshold");
+
+        let cycles_topup: u64 = CYCLES_TOPUP_AMT;
+        // convert cycles_topup to u128
+        let cycles_topup_input: u128 = cycles_topup as u128;
+
+        let (result,): (Result<(), String>,) = ic_cdk::api::call::call(
+            battery_canister.clone(),
+            "topup_cycles",
+            (
+                CYCLES_TOPUP_GROUP,
+                battery_api_key.unwrap(),
+                cycles_topup_input,
+                current_canister_balance,
+            ),
+        )
+        .await
+        .expect("call to ask failed");
+
+        if result.is_ok() {
+            ic_cdk::println!("Cycles balance topped up by {}", cycles_topup);
+        } else {
+            ic_cdk::println!("Cycles balance topup failed: {}", result.unwrap_err());
+        }
+    } else {
+        ic_cdk::println!("Cycles balance is above the threshold");
+
+        let (result,): (Result<(), String>,) = ic_cdk::api::call::call(
+            battery_canister.clone(),
+            "log_cycles",
+            (
+                CYCLES_TOPUP_GROUP,
+                battery_api_key.unwrap(),
+                current_canister_balance,
+            ),
+        )
+        .await
+        .expect("call to ask failed");
+
+        if result.is_ok() {
+            ic_cdk::println!("Cycles balance logged: {}", current_canister_balance);
+        } else {
+            ic_cdk::println!("Cycles balance log failed: {}", result.unwrap_err());
+        }
+    }
+}
+
+#[update]
+fn start_cycles_check_timer(secs: u64) {
+    let secs: Duration = Duration::from_secs(secs);
+    ic_cdk::println!(
+        "Controller canister: checking its cycles balance and request topup with {secs:?} interval..."
+    );
+
+    ic_cdk_timers::set_timer_interval(secs, || ic_cdk::spawn(check_cycles_and_topup()));
 }
 
 // ---------------------- Canister upgrade process ----------------------
@@ -220,7 +315,11 @@ fn pre_upgrade() {
 }
 
 #[post_upgrade]
-fn post_upgrade() {
+fn post_upgrade(
+    _owner: Option<Principal>,
+    battery_api_key: Option<String>,
+    battery_canister: Option<Principal>,
+) {
     let memory = memory::get_upgrades_memory();
 
     // Read the length of the state bytes.
@@ -238,6 +337,14 @@ fn post_upgrade() {
 
     // Rebuild the index from the stable vector content
     init_index();
+
+    // only update battery canister and api key
+    STATE.with(|state| {
+        state.borrow_mut().battery_api_key = battery_api_key;
+        state.borrow_mut().battery_canister = battery_canister;
+    });
+
+    start_cycles_check_timer(CYCLES_BALANCE_CHECK_MIN_INTERVAL_SECS);
 }
 
 // ---------------------- Custom getrandom ----------------------

@@ -6,11 +6,23 @@ if [[ -z "${CONTROLLER_PRINCIPAL}" ]]; then
   exit 1
 fi
 
+if [[ -z "${BATTERY_PRINCIAL}" ]]; then
+  echo "BATTERY_PRINCIAL is unset."
+  exit 1
+fi
+
+if [[ -z "${BATTERY_API_KEY}" ]]; then
+  echo "BATTERY_API_KEY is unset."
+  exit 1
+fi
+
 # To deplopy locally, update IC_NETWORK to local. To deploy to ic, update IC_NETWORK to ic.
 IC_NETWORK=${IC_NETWORK:-local}
 
 # Deploy vectordb canister 
-dfx deploy --network $IC_NETWORK arcmindvectordb --argument "(opt principal \"$CONTROLLER_PRINCIPAL\")" > arcmindvectordb_deploy.txt
+
+echo Deploying arcmindvectordb canister with owner=$CONTROLLER_PRINCIPAL, BATTERY_PRINCIAL=$BATTERY_PRINCIAL, BATTERY_API_KEY=$BATTERY_API_KEY on $IC_NETWORK
+dfx deploy --network $IC_NETWORK arcmindvectordb --argument "(opt principal \"$CONTROLLER_PRINCIPAL\", opt \"$BATTERY_API_KEY\", opt principal \"$BATTERY_PRINCIAL\")" > arcmindvectordb_deploy.txt
 
 VECTOR_PRINCIPAL=$(dfx canister --network $IC_NETWORK id arcmindvectordb)
 echo $VECTOR_PRINCIPAL
