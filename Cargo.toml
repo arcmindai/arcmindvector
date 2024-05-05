@@ -2,6 +2,7 @@
 members = [
     "src/arcmindvectordb",
 ]
+resolver = "1"
 
 [profile.release]
 lto = true
